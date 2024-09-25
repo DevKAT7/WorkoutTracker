@@ -20,6 +20,11 @@ namespace WorkoutTracker.Infrasctructure.Repositories
                 throw new ArgumentNullException(nameof(user));
             }
 
+            if(user.UserName == _context.Users.First().UserName)
+            {
+                throw new Exception("This username id already taken.");
+            }
+
             _context.Users.Add(user);
         }
 

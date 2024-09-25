@@ -13,6 +13,7 @@ namespace WorkoutTracker.Infrasctructure.Data
         public DbSet<Workout> Workouts { get; set; }
         public DbSet<Exercise> Exercises { get; set; }
         public DbSet<WorkoutExercise> WorkoutExercises { get; set; }
+        public DbSet<Role> Roles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -20,10 +21,6 @@ namespace WorkoutTracker.Infrasctructure.Data
                 .HasOne(w => w.User)
                 .WithMany(w => w.Workouts)
                 .HasForeignKey(w => w.UserId);
-
-            //modelBuilder.Entity<Workout>()
-            //    .HasMany(w => w.Exercises)
-            //    .WithMany(w => w.Workouts);
 
             modelBuilder.Entity<WorkoutExercise>()
             .HasKey(we => new { we.WorkoutId, we.ExerciseId });
@@ -37,6 +34,19 @@ namespace WorkoutTracker.Infrasctructure.Data
                 .HasOne(we => we.Exercise)
                 .WithMany(e => e.WorkoutExercises)
                 .HasForeignKey(we => we.ExerciseId);
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Role)
+                .WithMany(u => u.Users)
+                .HasForeignKey(u => u.RoleId);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Email)
+                .IsRequired();
+
+            modelBuilder.Entity<Role>()
+                .Property(r => r.Name)
+                .IsRequired();
         }
     }
 }
