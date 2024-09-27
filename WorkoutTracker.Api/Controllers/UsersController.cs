@@ -2,6 +2,7 @@
 using WorkoutTracker.Core.Repositories;
 using WorkoutTracker.Infrasctructure.DTO;
 using WorkoutTracker.Infrasctructure.Mapping;
+using WorkoutTracker.Infrasctructure.Services;
 
 namespace WorkoutTracker.Api.Controllers
 {
@@ -11,10 +12,12 @@ namespace WorkoutTracker.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly IUserService _accountService;
 
-        public UsersController(IUserRepository userRepository)
+        public UsersController(IUserRepository userRepository, IUserService accountService)
         {
             _userRepository = userRepository;
+            _accountService = accountService;
         }
 
         //GET api/users
@@ -43,19 +46,19 @@ namespace WorkoutTracker.Api.Controllers
         }
 
         //POST api/users
-        [HttpPost]
-        public ActionResult<UserReadDto> AddUser(UserCreateDto userCreateDto)
-        {
-            var user = userCreateDto.MapToUser();
+        //[HttpPost]
+        //public ActionResult<UserReadDto> AddUser(UserCreateDto userCreateDto)
+        //{
+        //    var user = userCreateDto.MapToUser();
 
-            _userRepository.Add(user);
+        //    _userRepository.Add(user);
 
-            _userRepository.SaveChanges();
+        //    _userRepository.SaveChanges();
 
-            var userReadDto = user.MapToDto();
+        //    var userReadDto = user.MapToDto();
 
-            return CreatedAtRoute(nameof(GetUserById), new { Id = userReadDto.Id }, userReadDto);
-        }
+        //    return CreatedAtRoute(nameof(GetUserById), new { Id = userReadDto.Id }, userReadDto);
+        //}
 
         //PUT api/users/{id}
         [HttpPut("{id}")]
@@ -91,6 +94,15 @@ namespace WorkoutTracker.Api.Controllers
             _userRepository.SaveChanges();
 
             return NoContent();
+        }
+
+        //POST api/users/register
+        [HttpPost("register")]
+        public ActionResult RegisterUser(UserRegisterDto userRegisterDto)
+        {
+            _accountService.RegisterUser(userRegisterDto);
+
+            return Ok();
         }
     }
 }

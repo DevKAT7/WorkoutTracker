@@ -14,9 +14,15 @@ namespace WorkoutTracker.Infrasctructure.Mapping
             };
         }
 
-        public static User MapToUser(this UserCreateDto userCreateDto)
+        //public static User MapToUser(this UserCreateDto userCreateDto)
+        //{
+        //    return new User(userCreateDto.UserName);
+        //}
+
+        public static User MapToUser(this UserRegisterDto userRegisterDto)
         {
-            return new User(userCreateDto.UserName);
+            return new User(userRegisterDto.UserName, userRegisterDto.Email,
+                userRegisterDto.Password, userRegisterDto.RoleId);
         }
     }
 }
