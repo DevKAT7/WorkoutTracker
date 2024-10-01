@@ -1,4 +1,5 @@
-﻿using WorkoutTracker.Core.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+using WorkoutTracker.Core.Domain;
 using WorkoutTracker.Core.Repositories;
 using WorkoutTracker.Infrasctructure.Data;
 
@@ -36,6 +37,13 @@ namespace WorkoutTracker.Infrasctructure.Repositories
         public User Get(int id)
         {
             return _context.Users.FirstOrDefault(x => x.Id == id);
+        }
+
+        public User Get(string email)
+        {
+            return _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefault(x => x.Email == email);
         }
 
         public List<User> GetAll()

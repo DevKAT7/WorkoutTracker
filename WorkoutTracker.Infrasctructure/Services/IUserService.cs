@@ -5,5 +5,6 @@ namespace WorkoutTracker.Infrasctructure.Services
     public interface IUserService
     {
         void RegisterUser(UserRegisterDto userRegisterDto);
+        string GenerateJwt(UserLoginDto userLoginDto);
     }
 }
