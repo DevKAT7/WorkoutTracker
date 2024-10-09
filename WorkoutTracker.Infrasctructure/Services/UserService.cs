@@ -26,6 +26,40 @@ namespace WorkoutTracker.Infrasctructure.Services
             _authenticationSettings = authenticationSettings;
         }
 
+        public IEnumerable<UserReadDto> GetAllUsers()
+        {
+            var users = _userRepository.GetAll();
+
+            return users.Select(x => x.MapToDto());
+        }
+
+        public UserReadDto GetUserById(int id)
+        {
+            var user = _userRepository.Get(id);
+
+            var userDto = user.MapToDto();
+
+            return userDto;
+        }
+
+        public void UpdateUser(int id, string userName, string email)
+        {
+            var user = _userRepository.Get(id);
+
+            user.UpdateUser(userName, email);
+
+            _userRepository.SaveChanges();
+        }
+
+        public void DeleteUser(int id)
+        {
+            var user = _userRepository.Get(id);
+
+            _userRepository.Delete(user);
+
+            _userRepository.SaveChanges();
+        }
+
         public void RegisterUser(UserRegisterDto userRegisterDto)
         {
             var user = userRegisterDto.MapToUser();
@@ -45,14 +79,14 @@ namespace WorkoutTracker.Infrasctructure.Services
 
             if (user is null)
             {
-                throw new BadRequestException("Invalid username or password");
+                throw new BadRequestException("Invalid username or password.");
             }
 
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userLoginDto.Password);
 
             if (result == PasswordVerificationResult.Failed)
             {
-                throw new BadRequestException("Invalid username or password");
+                throw new BadRequestException("Invalid username or password.");
             }
 
             var claims = new List<Claim>()

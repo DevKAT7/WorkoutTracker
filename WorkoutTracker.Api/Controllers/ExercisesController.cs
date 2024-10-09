@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WorkoutTracker.Core.Repositories;
 using WorkoutTracker.Infrasctructure.DTO;
-using WorkoutTracker.Infrasctructure.Mapping;
+using WorkoutTracker.Infrasctructure.Services;
 
 namespace WorkoutTracker.Api.Controllers
 {
@@ -9,62 +8,32 @@ namespace WorkoutTracker.Api.Controllers
     [ApiController]
     public class ExercisesController : ControllerBase
     {
-        private readonly IExerciseRepository _exerciseRepository;
+        private readonly IExerciseService _exerciseService;
 
-        public ExercisesController(IExerciseRepository exerciseRepository)
+        public ExercisesController(IExerciseService exerciseService)
         {
-            _exerciseRepository = exerciseRepository;
+            _exerciseService = exerciseService;
         }
 
         //GET api/exercises/{id}
         [HttpGet("{id}", Name = "GetExerciseById")]
         public ActionResult<ExerciseReadDto> GetExerciseById(int id)
         {
-            var exercise = _exerciseRepository.Get(id);
-
-            var exerciseRedDto = exercise.MapToDto();
-
-            if (exerciseRedDto != null)
-            {
-                return Ok(exerciseRedDto);
-            }
-
-            return NotFound();
+            return Ok(_exerciseService.GetExerciseById(id));
         }
 
         //GET api/exercise/workout/{workoutId}
         [HttpGet("workout/{workoutId}")]
         public ActionResult<IEnumerable<ExerciseReadDto>> GetAllExercises(int workoutId)
         {
-            var exercises = _exerciseRepository.GetAll(workoutId);
-
-            return Ok(exercises.Select(x => x.MapToDto()));
+            return Ok(_exerciseService.GetAllExercises(workoutId));
         }
-
-        //POST api/exercises
-        //[HttpPost]
-        //public ActionResult<ExerciseReadDto> AddExercise(ExerciseCreateDto exerciseCreateDto, int workoutId)
-        //{
-        //    var exercise = exerciseCreateDto.MapToExercise();
-
-        //    _exerciseRepository.Add(exercise, workoutId);
-
-        //    var exerciseReadDto = exercise.MapToDto();
-
-        //    return CreatedAtRoute(nameof(GetExerciseById), new {Id = exerciseReadDto.Id}, exerciseReadDto);
-        //}
 
         //POST api/exercises
         [HttpPost]
         public ActionResult<ExerciseReadDto> AddExercise(ExerciseCreateDto exerciseCreateDto)
         {
-            var exercise = exerciseCreateDto.MapToExercise();
-
-            _exerciseRepository.Add(exercise);
-
-            _exerciseRepository.SaveChanges();
-
-            var exerciseReadDto = exercise.MapToDto();
+            var exerciseReadDto = _exerciseService.AddExercise(exerciseCreateDto);
 
             return CreatedAtRoute(nameof(GetExerciseById), new { Id = exerciseReadDto.Id }, exerciseReadDto);
         }
@@ -73,16 +42,7 @@ namespace WorkoutTracker.Api.Controllers
         [HttpPut("{id}")]
         public ActionResult UpdateExercise(int id, string name, int? sets)
         {
-            var exercise = _exerciseRepository.Get(id);
-
-            if (exercise == null)
-            {
-                return NotFound();
-            }
-
-            exercise.Update(name, sets);
-
-            _exerciseRepository.SaveChanges();
+            _exerciseService.UpdateExercise(id, name, sets);
 
             return NoContent();
         }
@@ -91,16 +51,7 @@ namespace WorkoutTracker.Api.Controllers
         [HttpDelete("{id}")]
         public ActionResult DeleteWorkout(int id)
         {
-            var exercise = _exerciseRepository.Get(id);
-
-            if (exercise == null)
-            {
-                return NotFound();
-            }
-
-            _exerciseRepository.Delete(exercise);
-
-            _exerciseRepository.SaveChanges();
+            _exerciseService.DeleteWorkout(id);
 
             return NoContent();
         }

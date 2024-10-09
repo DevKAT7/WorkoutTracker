@@ -35,7 +35,7 @@ namespace WorkoutTracker.Infrasctructure.Middleware
                 context.Response.StatusCode = 500;
                 context.Response.ContentType = "application/json";
 
-                var errorResponse = new { message = "Something went wrong" };
+                var errorResponse = new { message = e.Message };
                 await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
             }
         }

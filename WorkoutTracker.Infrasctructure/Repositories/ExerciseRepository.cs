@@ -1,6 +1,7 @@
 ﻿using WorkoutTracker.Core.Domain;
 using WorkoutTracker.Core.Repositories;
 using WorkoutTracker.Infrasctructure.Data;
+using WorkoutTracker.Infrasctructure.Exceptions;
 
 namespace WorkoutTracker.Infrasctructure.Repositories
 {
@@ -12,25 +13,6 @@ namespace WorkoutTracker.Infrasctructure.Repositories
         {
             _context = context;
         }
-
-        //Adding exercise and adding it to workout
-        //public void Add(Exercise exercise, int workoutId)
-        //{
-        //    if (exercise == null)
-        //    {
-        //        throw new ArgumentNullException(nameof(exercise));
-        //    }
-
-        //    _context.Exercises.Add(exercise);
-
-        //    SaveChanges();
-
-        //    var workoutExercise = new WorkoutExercise(workoutId, exercise.Id);
-
-        //    _context.WorkoutExercises.Add(workoutExercise);
-
-        //    SaveChanges();
-        //}
 
         public void Add(Exercise exercise)
         {
@@ -61,11 +43,25 @@ namespace WorkoutTracker.Infrasctructure.Repositories
 
         public Exercise Get(int id)
         {
-            return _context.Exercises.FirstOrDefault(x => x.Id == id);
+            var exercise = _context.Exercises.FirstOrDefault(x => x.Id == id);
+
+            if (exercise is null)
+            {
+                throw new BadRequestException("Invalid Id.");
+            }
+
+            return exercise;
         }
 
         public List<Exercise> GetAll(int workoutId)
         {
+            var workout = _context.Workouts.FirstOrDefault(x => x.Id == workoutId);
+
+            if (workout is null)
+            {
+                throw new BadRequestException("Invalid workout Id.");
+            }
+
             return _context.WorkoutExercises.Where(x => x.WorkoutId == workoutId).Select(x => x.Exercise).ToList();
         }
 

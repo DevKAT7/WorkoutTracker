@@ -34,6 +34,8 @@ namespace WorkoutTracker.Api
             (@"Server=DESKTOP-G3PD29J\SQLEXPRESS;database=WorkoutTracker;
             Trusted_Connection=True;TrustServerCertificate=True;"));
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IWorkoutService, WorkoutService>();
+            builder.Services.AddScoped<IExerciseService, ExerciseService>();
             builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             builder.Services.AddScoped<IValidator<UserRegisterDto>, UserRegisterDtoValidator>();
             builder.Services.AddScoped<ErrorHandlingMiddleware>();

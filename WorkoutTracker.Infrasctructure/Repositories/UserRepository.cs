@@ -2,6 +2,7 @@
 using WorkoutTracker.Core.Domain;
 using WorkoutTracker.Core.Repositories;
 using WorkoutTracker.Infrasctructure.Data;
+using WorkoutTracker.Infrasctructure.Exceptions;
 
 namespace WorkoutTracker.Infrasctructure.Repositories
 {
@@ -36,7 +37,14 @@ namespace WorkoutTracker.Infrasctructure.Repositories
 
         public User Get(int id)
         {
-            return _context.Users.FirstOrDefault(x => x.Id == id);
+            var user = _context.Users.FirstOrDefault(x => x.Id == id);
+
+            if (user is null)
+            {
+                throw new BadRequestException("Invalid Id.");
+            }
+
+            return user;
         }
 
         public User Get(string email)
