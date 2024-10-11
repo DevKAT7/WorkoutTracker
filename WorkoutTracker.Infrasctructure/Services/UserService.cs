@@ -79,14 +79,14 @@ namespace WorkoutTracker.Infrasctructure.Services
 
             if (user is null)
             {
-                throw new BadRequestException("Invalid username or password.");
+                throw new BadRequestException("Invalid email or password.");
             }
 
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userLoginDto.Password);
 
             if (result == PasswordVerificationResult.Failed)
             {
-                throw new BadRequestException("Invalid username or password.");
+                throw new BadRequestException("Invalid email or password.");
             }
 
             var claims = new List<Claim>()
