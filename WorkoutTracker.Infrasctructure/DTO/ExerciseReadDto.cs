@@ -1,6 +1,4 @@
-﻿using WorkoutTracker.Core.Domain;
-
-namespace WorkoutTracker.Infrasctructure.DTO
+﻿namespace WorkoutTracker.Infrasctructure.DTO
 {
     public class ExerciseReadDto
     {

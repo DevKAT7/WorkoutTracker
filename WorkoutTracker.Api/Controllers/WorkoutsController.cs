@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Core.Repositories;
 using WorkoutTracker.Infrasctructure.DTO;
-using WorkoutTracker.Infrasctructure.Mapping;
+using WorkoutTracker.Infrasctructure.Services;
 
 namespace WorkoutTracker.Api.Controllers
 {
@@ -9,85 +9,50 @@ namespace WorkoutTracker.Api.Controllers
     [ApiController]
     public class WorkoutsController : ControllerBase
     {
-        private readonly IWorkoutRepository _workoutRepository;
+        private readonly IWorkoutService _workoutService;
 
-        public WorkoutsController(IWorkoutRepository workoutRepository)
+        public WorkoutsController(IWorkoutService workoutService)
         {
-            _workoutRepository = workoutRepository;
+            _workoutService = workoutService;
         }
 
         //GET api/workouts/user/{userId}
         [HttpGet("user/{userId}")]
         public ActionResult<IEnumerable<WorkoutReadDto>> GetAllWorkouts(int userId)
         {
-            var workouts = _workoutRepository.GetAll(userId);
-
-            return Ok(workouts.Select(x => x.MapToDto()));
+            return Ok(_workoutService.GetAllWorkouts(userId));
         }
 
         //GET api/workouts/{id}
         [HttpGet("{id}", Name = "GetWorkoutById")]
         public ActionResult<WorkoutReadDto> GetWorkoutById(int id)
         {
-            var workout = _workoutRepository.Get(id);
-
-            var workoutDto = workout.MapToDto();
-
-            if (workoutDto != null)
-            {
-                return Ok(workoutDto);
-            }
-
-            return NotFound();
+            return Ok(_workoutService.GetWorkoutById(id));
         }
 
         //POST api/workouts/
         [HttpPost]
         public ActionResult<WorkoutReadDto> AddWorkout(WorkoutCreateDto workoutCreateDto)
         {
-            var workout = workoutCreateDto.MapToWorkout();
-
-            _workoutRepository.Add(workout);
-
-            _workoutRepository.SaveChanges();
-
-            var workoutReadDto = workout.MapToDto();
+            var workoutReadDto = _workoutService.AddWorkout(workoutCreateDto);
 
             return CreatedAtRoute(nameof(GetWorkoutById), new { Id = workoutReadDto.Id }, workoutReadDto);
         }
 
-        //PUT api/workouts/add/{workoutId}, {exerciseId}
-        [HttpPut("add/{workoutId}, {exerciseId}")]
+        //PUT api/workouts/addExercise/{workoutId}, {exerciseId}
+        [HttpPut("addExercise/{workoutId}, {exerciseId}")]
         public ActionResult AddExerciseToWorkout(int workoutId, int exerciseId)
         {
-            var workout = _workoutRepository.Get(workoutId);
-
-            if (workout == null)
-            {
-                return NotFound();
-            }
-
-            _workoutRepository.AddExerciseToWorkout(workoutId, exerciseId);
-
-            _workoutRepository.SaveChanges();
+            _workoutService.AddExerciseToWorkout(workoutId, exerciseId);
 
             return NoContent();
         }
 
-        //PUT api/workouts/{id}
-        [HttpPut("delete/{workoutId}, {exerciseId}")]
+        //PUT api/workouts/deleteExercise/{workoutId}, {exerciseId}
+        [HttpPut("deleteExercise/{workoutId}, {exerciseId}")]
         public ActionResult DeleteExerciseFromWorkout(int workoutId, int exerciseId)
         {
-            var workout = _workoutRepository.Get(workoutId);
-
-            if (workout == null)
-            {
-                return NotFound();
-            }
-
-            _workoutRepository.DeleteExerciseFromWorkout(workoutId, exerciseId);
-
-            _workoutRepository.SaveChanges();
+            _workoutService.DeleteExerciseFromWorkout(workoutId, exerciseId);
 
             return NoContent();
         }
@@ -96,16 +61,7 @@ namespace WorkoutTracker.Api.Controllers
         [HttpPut("{id}")]
         public ActionResult UpdateWorkout(int id, string name, DayOfWeek? day)
         {
-            var workout = _workoutRepository.Get(id);
-
-            if (workout == null)
-            {
-                return NotFound();
-            }
-
-            workout.Update(name, day);
-
-            _workoutRepository.SaveChanges();
+            _workoutService.UpdateWorkout(id, name, day);
 
             return NoContent();
         }
@@ -114,16 +70,7 @@ namespace WorkoutTracker.Api.Controllers
         [HttpDelete("{id}")]
         public ActionResult DeleteWorkout(int id)
         {
-            var workout = _workoutRepository.Get(id);
-
-            if (workout == null)
-            {
-                return NotFound();
-            }
-
-            _workoutRepository.Delete(workout);
-
-            _workoutRepository.SaveChanges();
+            _workoutService.DeleteWorkout(id);
 
             return NoContent();
         }

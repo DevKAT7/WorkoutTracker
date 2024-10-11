@@ -12,12 +12,6 @@ namespace WorkoutTracker.Core.Domain
         public int RoleId { get; private set; }
         public Role Role { get; private set; }
 
-        //public User(string userName)
-        //{
-        //    UserName = userName;
-        //    Workouts = new List<Workout>();
-        //}
-
         public User(string userName, string email, string passwordHash, int roleId)
         {
             UserName = userName;
@@ -26,9 +20,10 @@ namespace WorkoutTracker.Core.Domain
             RoleId = roleId;
         }
 
-        public void UpdateUser(string userName)
+        public void UpdateUser(string userName, string email)
         {
             UserName = userName;
+            Email = email;
         }  
     }
 }

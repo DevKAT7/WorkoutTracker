@@ -11,13 +11,9 @@ namespace WorkoutTracker.Infrasctructure.Mapping
             {
                 Id = user.Id,
                 UserName = user.UserName,
+                Email = user.Email,
             };
         }
-
-        //public static User MapToUser(this UserCreateDto userCreateDto)
-        //{
-        //    return new User(userCreateDto.UserName);
-        //}
 
         public static User MapToUser(this UserRegisterDto userRegisterDto)
         {

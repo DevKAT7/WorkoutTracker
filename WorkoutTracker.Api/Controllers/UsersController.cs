@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WorkoutTracker.Core.Repositories;
 using WorkoutTracker.Infrasctructure.DTO;
-using WorkoutTracker.Infrasctructure.Mapping;
 using WorkoutTracker.Infrasctructure.Services;
 
 namespace WorkoutTracker.Api.Controllers
@@ -11,54 +9,34 @@ namespace WorkoutTracker.Api.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IUserService _accountService;
+        private readonly IUserService _userService;
 
-        public UsersController(IUserRepository userRepository, IUserService accountService)
+        public UsersController(IUserService userService)
         {
-            _userRepository = userRepository;
-            _accountService = accountService;
+            _userService = userService;
         }
 
         //GET api/users
         [HttpGet]
         public ActionResult<IEnumerable<UserReadDto>> GetAllUsers()
         {
-            var users = _userRepository.GetAll();
-
-            return Ok(users.Select(x => x.MapToDto()));
+            return Ok(_userService.GetAllUsers());
         }
 
         //GET api/users/{id}
         [HttpGet("{id}", Name = "GetUserById")]
         public ActionResult<UserReadDto> GetUserById(int id)
         {
-            var user = _userRepository.Get(id);
+            var user = _userService.GetUserById(id);
 
-            var userDto = user.MapToDto();
-
-            if (userDto != null)
-            {
-                return Ok(userDto);
-            }
-
-            return NotFound();
+            return Ok(user);
         }
 
         //PUT api/users/{id}
         [HttpPut("{id}")]
-        public ActionResult UpdateUser(int id, string userName)
+        public ActionResult UpdateUser(int id, string userName, string email)
         {
-            var user = _userRepository.Get(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            user.UpdateUser(userName);
-
-            _userRepository.SaveChanges();
+            _userService.UpdateUser(id, userName, email);
 
             return NoContent();
         }
@@ -67,16 +45,7 @@ namespace WorkoutTracker.Api.Controllers
         [HttpDelete("{id}")]
         public ActionResult DeleteUser(int id)
         {
-            var user = _userRepository.Get(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            _userRepository.Delete(user);
-
-            _userRepository.SaveChanges();
+            _userService.DeleteUser(id);
 
             return NoContent();
         }
@@ -85,7 +54,7 @@ namespace WorkoutTracker.Api.Controllers
         [HttpPost("register")]
         public ActionResult RegisterUser(UserRegisterDto userRegisterDto)
         {
-            _accountService.RegisterUser(userRegisterDto);
+            _userService.RegisterUser(userRegisterDto);
 
             return Ok();
         }
@@ -94,7 +63,7 @@ namespace WorkoutTracker.Api.Controllers
         [HttpPost("login")]
         public ActionResult LoginUser(UserLoginDto userLoginDto)
         {
-            string token = _accountService.GenerateJwt(userLoginDto);
+            string token = _userService.GenerateJwt(userLoginDto);
 
             return Ok(token);
         }
