@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Infrasctructure.DTO;
 using WorkoutTracker.Infrasctructure.Services;
 
@@ -7,6 +8,7 @@ namespace WorkoutTracker.Api.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -18,6 +20,7 @@ namespace WorkoutTracker.Api.Controllers
 
         //GET api/users
         [HttpGet]
+        [Authorize(Roles = "Admin, Manager")]
         public ActionResult<IEnumerable<UserReadDto>> GetAllUsers()
         {
             return Ok(_userService.GetAllUsers());
@@ -52,6 +55,7 @@ namespace WorkoutTracker.Api.Controllers
 
         //POST api/users/register
         [HttpPost("register")]
+        [AllowAnonymous]
         public ActionResult RegisterUser(UserRegisterDto userRegisterDto)
         {
             _userService.RegisterUser(userRegisterDto);
@@ -61,6 +65,7 @@ namespace WorkoutTracker.Api.Controllers
 
         //POST api/users/login
         [HttpPost("login")]
+        [AllowAnonymous]
         public ActionResult LoginUser(UserLoginDto userLoginDto)
         {
             string token = _userService.GenerateJwt(userLoginDto);

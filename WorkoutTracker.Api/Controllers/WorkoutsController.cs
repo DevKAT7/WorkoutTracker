@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using WorkoutTracker.Core.Repositories;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Infrasctructure.DTO;
 using WorkoutTracker.Infrasctructure.Services;
 
@@ -7,6 +7,7 @@ namespace WorkoutTracker.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class WorkoutsController : ControllerBase
     {
         private readonly IWorkoutService _workoutService;
