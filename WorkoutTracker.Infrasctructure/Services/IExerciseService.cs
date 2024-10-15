@@ -8,6 +8,6 @@ namespace WorkoutTracker.Infrasctructure.Services
         public IEnumerable<ExerciseReadDto> GetAllExercises(int workoutId);
         public ExerciseReadDto AddExercise(ExerciseCreateDto exerciseCreateDto);
         public void UpdateExercise(int id, string name, int? sets);
-        public void DeleteWorkout(int id);
+        public void DeleteExercise(int id);
     }
 }

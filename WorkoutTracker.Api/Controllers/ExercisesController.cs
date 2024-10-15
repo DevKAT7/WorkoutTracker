@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WorkoutTracker.Infrasctructure.DTO;
 using WorkoutTracker.Infrasctructure.Services;
 
@@ -6,6 +7,7 @@ namespace WorkoutTracker.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ExercisesController : ControllerBase
     {
         private readonly IExerciseService _exerciseService;
@@ -49,9 +51,9 @@ namespace WorkoutTracker.Api.Controllers
 
         //DELETE api/exercises/{id}
         [HttpDelete("{id}")]
-        public ActionResult DeleteWorkout(int id)
+        public ActionResult DeleteExercise(int id)
         {
-            _exerciseService.DeleteWorkout(id);
+            _exerciseService.DeleteExercise(id);
 
             return NoContent();
         }

@@ -49,7 +49,7 @@ namespace WorkoutTracker.Infrasctructure.Services
             _exerciseRepository.SaveChanges();
         }
 
-        public void DeleteWorkout(int id)
+        public void DeleteExercise(int id)
         {
             var exercise = _exerciseRepository.Get(id);
 
